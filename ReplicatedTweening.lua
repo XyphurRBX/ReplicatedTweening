@@ -118,7 +118,9 @@ function module:Create(instance, tInfo, propertyTable)
 		
 		if Yield and SpecificClient == nil then
 			local i, existingFinish = 0, latestFinish[instance]
-			repeat wait(0.1) i = i + 0.1 until i >= waitTime or tweenMaster.Stopped
+			repeat
+				i += task.wait()
+			until i >= waitTime or tweenMaster.Stopped
 			if latestFinish[instance] == existingFinish then
 				latestFinish[instance] = nil -- clear memory if this instance hasn't already been retweened.
 			end
@@ -127,9 +129,11 @@ function module:Create(instance, tInfo, propertyTable)
 			end
 			return
 		elseif SpecificClient == nil then
-			spawn(function()
+			task.spawn(function()
 				local i, existingFinish = 0, latestFinish[instance]
-				repeat wait(0.1) i = i + 0.1 until i >= waitTime or tweenMaster.Stopped
+				repeat
+					i += task.wait()
+				until i >= waitTime or tweenMaster.Stopped
 				if latestFinish[instance] == existingFinish then
 					latestFinish[instance] = nil -- clear memory if this instance hasn't already been retweened.
 				end
@@ -187,7 +191,7 @@ if rService:IsClient() then -- OnClientEvent only works clientside
 					local waitTime = (latestFinish[instance] - os.time())
 					latestFinish[instance] = finishTime + waitTime
 					existingFinish = latestFinish[instance]
-					wait(waitTime)
+					task.wait(waitTime)
 				else
 					latestFinish[instance] = finishTime
 				end
@@ -202,7 +206,7 @@ if rService:IsClient() then -- OnClientEvent only works clientside
 				runningTweens[instance] = tween
 				tween:Play()
 				--print("TweenStarted",os.time(),existingFinish)
-				wait(tInfo.Time or 1)
+				task.wait(tInfo.Time or 1)
 				--print("TweenComplete",os.time(),existingFinish)
 				if latestFinish[instance] == existingFinish then
 					latestFinish[instance] = nil -- clear memory if this instance hasn't already been retweened.
