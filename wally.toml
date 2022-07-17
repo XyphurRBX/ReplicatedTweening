@@ -1,0 +1,10 @@
+[package]
+name = "xyphurrbx/replicatedtweening"
+description = "Run client-sided tweens from the server"
+version = "1.0.0"
+license = "GNU"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+exclude = [ ".gitignore", "README.md", "foreman.toml", "selene.toml" ]
+
+[dependencies]
