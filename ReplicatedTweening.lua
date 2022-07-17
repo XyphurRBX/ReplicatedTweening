@@ -78,9 +78,7 @@ local function Table_To_TweenInfo(tbl)
 end
 
 local function serverAssignProperties(instance, properties)
-	print("Assigning properties")
 	for property, value in pairs (properties) do
-		print("Assigned", property, "to", value)
 		instance[property] = value
 	end
 end
