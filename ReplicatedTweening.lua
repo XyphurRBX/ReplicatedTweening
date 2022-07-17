@@ -56,8 +56,9 @@ local rService = game:GetService("RunService")
 local tEvent
 
 if tEvent == nil and rService:IsServer() then
-	tEvent = Instance.new("RemoteEvent", script)
+	tEvent = Instance.new("RemoteEvent")
 	tEvent.Name = "TweenEvent"
+	tEvent.Parent = script
 else
 	tEvent = script:WaitForChild("TweenEvent")
 end
@@ -144,15 +145,15 @@ function module:Create(instance, tInfo, propertyTable)
 		end
 	end
 
-	function tweenMaster:Play(Yield, SpecificClient)
+	tweenMaster.Play = function(_, Yield, SpecificClient)
 		Play(Yield, SpecificClient)
 	end
 	
-	function tweenMaster:QueuePlay(Yield, SpecificClient)
+	tweenMaster.QueuePlay = function(_, Yield, SpecificClient)
 		Play(Yield, SpecificClient, true)
 	end
 
-	function tweenMaster:Pause(SpecificClient)
+	tweenMaster.Pause = function(_, SpecificClient)
 		if SpecificClient == nil then
 			tweenMaster.Paused = true
 			tEvent:FireAllClients("PauseTween", instance)
@@ -162,7 +163,7 @@ function module:Create(instance, tInfo, propertyTable)
 		end
 	end
 
-	function tweenMaster:Stop(SpecificClient)
+	tweenMaster.Stop = function(_, SpecificClient)
 		if SpecificClient == nil then
 			tweenMaster.Stopped = true
 			tEvent:FireAllClients("StopTween", instance)
