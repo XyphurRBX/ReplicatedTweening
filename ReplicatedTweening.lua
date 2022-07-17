@@ -9,7 +9,7 @@
 
 	:GetTweenObject(instance [Instance], TweenInfo [TweenInfo Object], PropertyTable [Table]) [Tween]
 	Parameters are exactly the same as TweenService:Create(), it returns a fake Tween object with Play,
-	Pause and Stop functions.
+	Pause and Cancel functions.
 
 	Tween:Play(Yield [Boolean, optional], Player [Player Object, optional])
 	Runs the tween. The player parameter will only play the tween for that specific player.
@@ -21,8 +21,8 @@
 	fire this event as close to when you would like it to be played on the client to maintain alignment between tweens. If fired 
 	multiple times in a short time frame, this may result in clients becoming out of sync over time.
 
-	Tween:Stop(Player [Player Object, optional])
-	Stops the tween. The player parameter will only stop the tween for that specific player.
+	Tween:Cancel(Player [Player Object, optional])
+	Stops the tween. The player parameter will only cancel the tween for that specific player.
 
 	Tween:Pause(Player [Player Object, optional])
 	Pauses the tween. The player parameter will only pause the tween for that specific player.
@@ -36,11 +36,11 @@
 
 	To use this module, first require it (e.g. require(game.ReplicatedStorage.ReplicatedTweening)).
 	To get the tween object you must first call :GetTweenObject(), this returns a fake Tween object.
-	Use this object to play, stop and pause the tween by using Play(), Stop(), Pause()
+	Use this object to play, cancel and pause the tween by using Play(), Cancel(), Pause()
 	as functions of the Tween object (e.g. Tween:Play()).
 
 	You can also enter a player as the first parameter of each of these functions
-	to stop, play or pause the tween only for that specific player.
+	to cancel, play or pause the tween only for that specific player.
 
 	Example code:
 	local CustomTweenService = require(game.ReplicatedStorage.ReplicatedTweening)
@@ -163,7 +163,7 @@ function module:Create(instance, tInfo, propertyTable)
 		end
 	end
 
-	tweenMaster.Stop = function(_, SpecificClient)
+	tweenMaster.Cancel = function(_, SpecificClient)
 		if SpecificClient == nil then
 			tweenMaster.Stopped = true
 			tEvent:FireAllClients("StopTween", instance)
@@ -171,6 +171,9 @@ function module:Create(instance, tInfo, propertyTable)
 			tEvent:FireClient("StopTween", instance)
 		end
 	end
+
+	tweenMaster.Destroy = tweenMaster.Cancel
+
 	return tweenMaster
 end
 
@@ -199,7 +202,7 @@ if rService:IsClient() then -- OnClientEvent only works clientside
 				
 				
 				if runningTweens[instance] ~= nil then -- im aware this will pick up paused tweens, however it doesn't matter
-					runningTweens[instance]:Cancel() -- stop previously running tween to run this one
+					runningTweens[instance]:Cancel() -- cancel previously running tween to run this one
 					warn("Canceled a previously running tween to run requested tween")
 				end
 
@@ -223,7 +226,7 @@ if rService:IsClient() then -- OnClientEvent only works clientside
 				runTween(true) -- run as a queued tween
 			elseif purpose == "StopTween" then
 				if runningTweens[instance] ~= nil then -- check that the tween exists
-					runningTweens[instance]:Stop() -- stop the tween
+					runningTweens[instance]:Cancel() -- cancel the tween
 					runningTweens[instance] = nil -- delete from table
 				else
 					warn("Tween being stopped does not exist.")
