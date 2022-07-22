@@ -203,7 +203,6 @@ if rService:IsClient() then -- OnClientEvent only works clientside
 				
 				if runningTweens[instance] ~= nil then -- im aware this will pick up paused tweens, however it doesn't matter
 					runningTweens[instance]:Cancel() -- cancel previously running tween to run this one
-					warn("Canceled a previously running tween to run requested tween")
 				end
 
 				local tween = tService:Create(instance, tInfo, propertyTable)
